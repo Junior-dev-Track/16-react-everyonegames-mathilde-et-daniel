@@ -1,0 +1,25 @@
+
+.featured-game {
+    height: 75vh;
+    background: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.featured-game h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    position: relative;
+    bottom: -50%;
+}
+
+.featured-game-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 75vh; 
+    object-fit: cover; 
+    object-position: top;
+    z-index: -1;
+}
