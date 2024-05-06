@@ -1,0 +1,7 @@
+ "https://api.rawg.io/api/games?key=c9e41bdc1199404487e7c33b3e06be3f&results&short_screenshots&image"
+
+
+c9e41bdc1199404487e7c33b3e06be3f
+
+
+

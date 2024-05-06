@@ -5,21 +5,20 @@ import "../App.css";
 //import { px } from "framer-motion";
 
 const Games = () => {
-  const [data, setData] = useState([]);
-  const [pageSize, setPageSize] = useState(10);
+  const [data, setData] = useState({ results: [], pageSize: 20 });
 
   useEffect(() => {
     axios
       .get(
-        "https://api.rawg.io/api/games?key=c9e41bdc1199404487e7c33b3e06be3f&results&short_screenshots&image"
+        "https://api@rawg.io/api/games?key=c9e41bdc1199404487e7c33b3e06be3f&page_size=50"
       )
       .then((response) => {
-        setData(response.data);
+        setData({ ...response.data, pageSize: data.pageSize });
       })
       .catch((error) => {
         console.log("Error fetching data", error);
       });
-  }, [pageSize]);
+  }, [data.pageSize]);
 
   return (
     <div className="games">
@@ -28,8 +27,10 @@ const Games = () => {
         <label htmlFor="pageSize">Number of items per page:</label>
         <select
           id="pageSize"
-          value={pageSize}
-          onChange={(e) => setPageSize(parseInt(e.target.value))}
+          value={data.pageSize}
+          onChange={(e) =>
+            setData({ ...data, pageSize: parseInt(e.target.value) })
+          }
         >
           <option value={5}>5</option>
           <option value={10}>10</option>
@@ -39,7 +40,7 @@ const Games = () => {
       </div>
       <ul
         style={{
-          marginTop: "20px",
+          margin: "50px 0 ",
           position: "relative",
           display: "flex",
           flexWrap: "wrap",
@@ -53,7 +54,7 @@ const Games = () => {
             /*return <li key={index}>{game.slug}</li>;*/
             return (
               <li key={index} style={{ width: "200px", height: "200px" }}>
-                {game.name}
+                {game.slug}
 
                 <br />
                 {game.released}

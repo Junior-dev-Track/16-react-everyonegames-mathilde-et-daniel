@@ -9,7 +9,10 @@ const Navigation = () => {
           <li>acceuil</li>
         </NavLink>
         <NavLink to="/About">
-          <li>à propos</li>
+          <li>Liste de jeux</li>
+        </NavLink>
+        <NavLink to="/Dernier">
+          <li>Les dernières sorties</li>
         </NavLink>
       </ul>
     </div>
