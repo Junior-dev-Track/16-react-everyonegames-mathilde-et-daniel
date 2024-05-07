@@ -7,7 +7,7 @@ function Categories({ selectCategory }) {
   };
 
   return (
-    <div>
+    <div className='filters'>
       <button onClick={() => handleCategoryClick('new')}>New Releases</button>
       <button onClick={() => handleCategoryClick('nextWeek')}>Next Week Releases</button>
       <button onClick={() => handleCategoryClick('popular')}>Popular Games</button>

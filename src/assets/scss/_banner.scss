@@ -1,7 +1,18 @@
 
-.featured-game {
+.featured-game-container {
     height: 75vh;
-    background: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.featured-game {
+    height: 75vh;  
+    position: relative;
+}
+
+.infos {
+    position: absolute;
+    bottom: 50px;
 }
 
 .featured-game h2 {
@@ -9,9 +20,27 @@
     font-weight: 700;
     color: #fff;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-    position: relative;
-    bottom: -50%;
+    width: 500px;
+    margin-bottom: 40px;
 }
+
+.featured-game p {
+    font-size: 1.5rem;
+    color: #fff;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    width: 500px;
+    margin-bottom: 40px;
+}
+
+.featured-game-link {
+    padding: 14px 28px;
+    background: linear-gradient(90deg, rgba(97,19,110,1) 0%, rgba(246,0,190,1) 100%);
+    border-radius: 24px;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 16px;
+}
+
 
 .featured-game-img {
     position: absolute;
@@ -21,5 +50,20 @@
     height: 75vh; 
     object-fit: cover; 
     object-position: top;
+    z-index: -2;
+}
+
+.featured-game-shadow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 75vh;
+    /*background: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);*/
+    background: linear-gradient(to top, rgba(0, 22, 38, 1) 0%, rgba(0, 22, 38, 0) 100%);
+    
     z-index: -1;
 }
+
+

@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import GameCard from './GameCard';
 import Header from './Header';
 import Categories from './Categories';
+import FeaturedGame from './FeaturedGame';
 
 const API_KEY = import.meta.env.VITE_APP_API_KEY;
 
@@ -25,14 +26,24 @@ function Home() {
       if (node) observer.current.observe(node);
     }, []);
 
+    const currentYear = new Date().getFullYear();
+    const startOfYear = `${currentYear}-01-01`;
+    const endOfYear = `${currentYear}-12-31`;
+
+    useEffect(() => {
+        setDates(`${startOfYear},${endOfYear}`);
+    }, []);
+
 
     useEffect(() => {
     fetch(`https://api.rawg.io/api/games?key=${API_KEY}&page=${page}&ordering=${ordering}&dates=${dates}`)
         .then(response => response.json())
         .then(data => {
-        setGames(prevGames => [...prevGames, ...data.results]);
-        setFeaturedGame(data.results[0]);
-        });
+            const newGames = [...games, ...data.results];
+            newGames.sort((a, b) => new Date(b.released) - new Date(a.released));
+            setGames(newGames);
+            setFeaturedGame(data.results[0]);
+          });
     }, [page, ordering, dates]);
 
 
@@ -48,7 +59,7 @@ function Home() {
     switch (category) {
       case 'new':
         setOrdering('-released');
-        setDates('');
+        setDates(`${startOfYear},${endOfYear}`);
         break;
       case 'nextWeek':
         setOrdering('-released');
@@ -62,21 +73,16 @@ function Home() {
         setOrdering('-released');
         setDates('');
     }
+    setGames([]);
+    setPage(1);
   };
 
 
   return (
     <div>
       <Header />
-      {featuredGame && (
-        <div className="featured-game container">
-          <h2>{featuredGame.name}</h2>
-          <img className='featured-game-img' src={featuredGame.background_image} alt={featuredGame.name} />
-          {/* Add more game details here */}
-        </div>
-      )}
+      {featuredGame && <FeaturedGame game={featuredGame} />}
       <div className="container">
-        {/* <div className="spacer" style={{ height: '75vh' }}></div> */}
         <Categories selectCategory={selectCategory} />
         <div className='game-card-container'>
             {games.map((game, index) => {
@@ -85,7 +91,7 @@ function Home() {
                 } else {
                 return <GameCard key={`${game.id}-${index}`} game={game} />;
                 }
-            })}
+            })} 
         </div>
         </div>
     </div>
