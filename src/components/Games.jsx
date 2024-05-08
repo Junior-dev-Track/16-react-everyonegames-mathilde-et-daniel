@@ -5,13 +5,11 @@ import "../App.css";
 //import { px } from "framer-motion";
 
 const Games = () => {
-  const [data, setData] = useState({ results: [], pageSize: 20 });
+  const [data, setData] = useState({ results: [], pageSize: [20, 5, 10, 40] });
 
   useEffect(() => {
     axios
-      .get(
-        "https://api@rawg.io/api/games?key=c9e41bdc1199404487e7c33b3e06be3f&page_size=50"
-      )
+      .get("https://api@rawg.io/api/games?key=c9e41bdc1199404487e7c33b3e06be3f")
       .then((response) => {
         setData({ ...response.data, pageSize: data.pageSize });
       })

@@ -14,6 +14,9 @@ const Navigation = () => {
         <NavLink to="/Dernier">
           <li>Les dernières sorties</li>
         </NavLink>
+        <NavLink to="/Platformes">
+          <li>Les jeux par console</li>
+        </NavLink>
       </ul>
     </div>
   );

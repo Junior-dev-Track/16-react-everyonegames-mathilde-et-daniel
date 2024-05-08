@@ -1,9 +1,7 @@
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { useState, useEffect } from "react";
-import "../App.css";
-//import Change_pages from "./Change_pages";
 
-const AllGames = () => {
+const LesPlatformes = () => {
   const [data, setData] = useState({
     results: [],
     page_size: [20, 5, 10, 40],
@@ -15,7 +13,7 @@ const AllGames = () => {
     if (page && data.page_size) {
       axios
         .get(
-          `https://api.rawg.io/api/games?key=${apiKey}&page=${page}&page_size=${data.page_size}`
+          `https://api.rawg.io/api/games/platforms_count?key=${apiKey}&page=${page}&page_size=${data.page_size}`
         )
         .then((response) => {
           setData({ ...response.data, page_size: data.page_size });
@@ -28,7 +26,6 @@ const AllGames = () => {
 
   return (
     <div>
-      <h1>ALL GAMES</h1>
       <div>
         <label htmlFor="page_size">Nombres de jeux part page:</label>
         <select
@@ -42,7 +39,6 @@ const AllGames = () => {
           <option value={5}>5</option>
           <option value={10}>10</option>
           <option value={40}>40</option>
-
           {/* Add more options if necessary */}
         </select>
       </div>
@@ -75,50 +71,30 @@ const AllGames = () => {
         }}
       >
         {data.results &&
-          data.results.map((all_game, index) => {
+          data.results.map((jeux, index) => {
             return (
               <li
                 key={index}
-                style={{ width: "200px", height: "200px", margin: "5px" }}
+                style={{
+                  width: "200px",
+                  border: "1px solid #ccc",
+                  padding: "10px",
+                  borderRadius: "5px",
+                }}
               >
-                {all_game.slug}
-                <br />
-                {all_game.released}
+                {jeux.slug}
                 <br />
                 <img
-                  src={all_game.short_screenshots[0].image}
-                  alt={all_game.slug}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
+                  src={jeux.short_screenshots[0].image}
+                  alt={jeux.slug}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               </li>
             );
           })}
       </ul>
-      <br />
-      <div
-        style={{
-          margin: "100px 0 50px 0",
-          display: "flex",
-          gap: 20,
-          alignContent: "center",
-          justifyContent: "center",
-        }}
-      >
-        <button className="pre" onClick={() => setPage(page - 1)}>
-          Précédent
-        </button>
-        <div>Page {page}</div>
-        <button className="next" onClick={() => setPage(page + 1)}>
-          Suivant
-        </button>
-      </div>
-      *{/*<Change_pages page={page} setPage={setPage} />*/}{" "}
     </div>
   );
 };
 
-export default AllGames;
+export default LesPlatformes;
