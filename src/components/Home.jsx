@@ -43,6 +43,13 @@ function Home() {
             newGames.sort((a, b) => new Date(b.released) - new Date(a.released));
             setGames(newGames);
             setFeaturedGame(data.results[0]);
+
+            const featuredGameId = data.results[0].id;
+            fetch(`https://api.rawg.io/api/games/${featuredGameId}?key=${API_KEY}`)
+                .then(response => response.json())
+                .then(data => {
+                setFeaturedGame(data);
+                });
           });
     }, [page, ordering, dates]);
 
