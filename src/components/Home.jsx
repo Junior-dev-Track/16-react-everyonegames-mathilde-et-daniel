@@ -1,10 +1,13 @@
 // components/Home.jsx
 
 import { useEffect, useState, useRef, useCallback } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+
 import GameCard from './GameCard';
 import Header from './Header';
 import Categories from './Categories';
 import FeaturedGame from './FeaturedGame';
+import GenreDropdown from './GenreDropdown';
 
 const API_KEY = import.meta.env.VITE_APP_API_KEY;
 
@@ -14,17 +17,25 @@ function Home() {
     const [page, setPage] = useState(1);
     const [ordering, setOrdering] = useState('');
     const [dates, setDates] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
     const observer = useRef();
+    const [allGames, setAllGames] = useState([]);
+    const [genre, setGenre] = useState('');
+    const [genres, setGenres] = useState([]);
+
+    const [loading, setLoading] = useState(false);
   
     const lastGameElementRef = useCallback(node => {
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver(entries => {
-        if (entries[0].isIntersecting) {
-          setPage(prevPage => prevPage + 1);
-        }
-      });
-      if (node) observer.current.observe(node);
-    }, []);
+        if (loading) return;
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting) {
+            setPage(prevPage => prevPage + 1);
+            }
+        });
+        if (node) observer.current.observe(node);
+        }, [loading]);
+
 
     const currentYear = new Date().getFullYear();
     const startOfYear = `${currentYear}-01-01`;
@@ -34,27 +45,65 @@ function Home() {
         setDates(`${startOfYear},${endOfYear}`);
     }, []);
 
+    const handleSearchChange = (newSearchQuery) => {
+        setSearchQuery(newSearchQuery);
+        setPage(1);
+    }
+
+    const resetState = () => {
+        setSearchQuery('');
+        setPage(1);
+    }
+
 
     useEffect(() => {
-    fetch(`https://api.rawg.io/api/games?key=${API_KEY}&page=${page}&ordering=${ordering}&dates=${dates}`)
+        fetch(`https://api.rawg.io/api/genres?key=${API_KEY}&page_size=40`)
+          .then(response => response.json())
+          .then(data => {
+            setGenres(data.results);
+          });
+      }, []);
+
+
+    const handleGenreChange = (newGenre) => {
+        setGenre(newGenre);
+        setGames([]);
+        setPage(1);
+    }
+
+
+    useEffect(() => {
+    setLoading(true);
+    fetch(`https://api.rawg.io/api/games?key=${API_KEY}&page=${page}&page_size=20&ordering=${ordering}&dates=${dates}&search=${searchQuery}`)
         .then(response => response.json())
         .then(data => {
-            const newGames = [...games, ...data.results];
+        if (data.results && Array.isArray(data.results)) {
+            const uniqueGames = data.results.filter(newGame => 
+            !games.some(game => game.id === newGame.id) && 
+            newGame.background_image
+            );
+            const newGames = [...games, ...uniqueGames];
             newGames.sort((a, b) => new Date(b.released) - new Date(a.released));
             setGames(newGames);
-            setFeaturedGame(data.results[0]);
+            setFeaturedGame(newGames[0]);
 
-            const featuredGameId = data.results[0].id;
+            const featuredGameId = newGames[0].id;
             fetch(`https://api.rawg.io/api/games/${featuredGameId}?key=${API_KEY}`)
-                .then(response => response.json())
-                .then(data => {
+            .then(response => response.json())
+            .then(data => {
                 setFeaturedGame(data);
-                });
-          });
-    }, [page, ordering, dates]);
+            });
+        }
+        setLoading(false);
+        });
+    }, [page, ordering, dates, searchQuery]);
 
 
-  const nextPage = () => setPage(page + 1);
+    const nextPage = () => {
+        if (!loading) {
+        setPage(prevPage => prevPage + 1);
+        }
+    };
   const prevPage = () => setPage(page > 1 ? page - 1 : page);
 
 
@@ -87,22 +136,26 @@ function Home() {
 
   return (
     <div>
-      <Header />
+      <Header onSearchChange={handleSearchChange} onLogoClick={resetState} />
       {featuredGame && <FeaturedGame game={featuredGame} />}
       <div className="container">
-        <Categories selectCategory={selectCategory} />
+        <div className="category">
+            <Categories selectCategory={selectCategory} />
+            <GenreDropdown onGenreChange={handleGenreChange} genres={genres} />
+        </div>
+        <InfiniteScroll
+        dataLength={games.length}
+        next={nextPage}
+        hasMore={true}
+        loader={<h4>Loading...</h4>}
+      >
         <div className='game-card-container'>
-            {games.map((game, index) => {
-                if (games.length === index + 1) {
-                return <GameCard ref={lastGameElementRef} key={`${game.id}-${index}`} game={game} />;
-                } else {
-                return <GameCard key={`${game.id}-${index}`} game={game} />;
-                }
-            })} 
+          {games.map((game, index) => <GameCard key={`${game.id}-${index}`} game={game} />)}
         </div>
-        </div>
+      </InfiniteScroll>
     </div>
-  );
+  </div>
+);
   
 }
 
